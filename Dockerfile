@@ -8,17 +8,20 @@ RUN set -ex \
 		libpng12-dev \
 		libpq-dev \
 	' \
+	&& pecl install xdebug \
 	&& apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd \
 		--with-jpeg-dir=/usr \
 		--with-png-dir=/usr \
-	&& docker-php-ext-install -j "$(nproc)" gd mbstring pdo pdo_mysql pdo_pgsql xdebug zip \
+	&& docker-php-ext-install -j "$(nproc)" gd mbstring pdo pdo_mysql pdo_pgsql zip \
 	&& apt-mark manual \
 		libjpeg62-turbo \
 		libpq5 \
 	&& apt-get purge -y --auto-remove $buildDeps
 
 WORKDIR $HOME
+## Enable XDebug
+RUN docker-php-ext-enable xdebug
 
 # installing composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
