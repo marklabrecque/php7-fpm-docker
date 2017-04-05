@@ -12,17 +12,17 @@ RUN set -ex \
 	&& docker-php-ext-configure gd \
 		--with-jpeg-dir=/usr \
 		--with-png-dir=/usr \
-	&& docker-php-ext-install -j "$(nproc)" gd mbstring pdo pdo_mysql pdo_pgsql zip \
+	&& docker-php-ext-install -j "$(nproc)" gd mbstring opcache pdo pdo_mysql zip \
 	&& apt-mark manual \
 		libjpeg62-turbo \
 		libpq5 \
 	&& apt-get purge -y --auto-remove $buildDeps
 
-WORKDIR $HOME
-
 ## Enable XDebug
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
+
+WORKDIR $HOME
 
 # installing composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
